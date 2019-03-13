@@ -1,0 +1,30 @@
+define([], function() {
+  return {
+    "PropertyPaneDescription": "Configuración del carrusel",
+    "GeneralGroupName": "General",
+    "AutoplayGroupName": "Autoplay",
+    "DataConfigurationGroupName": "Configuración de datos",
+    "AdvancedGroupName": "Configuración avanzada",
+    "ListFieldLabel": "Lista de banners",
+    "TitleFieldLabel": "Campo título",
+    "SubtitleFieldLabel": "Campo subtítulo",
+    "ImageFieldLabel": "Campo imagen",
+    "URLFieldLabel": "Campo URL",
+    "LoadingText": "Cargando opciones...",
+    "ErrorLoadingListsText": "Error al cargar los elementos",
+    "EnableNavigation": "Habilitar navegación",
+    "EnablePagination": "Habilitar paginación",
+    "SlidesPerWiew": "Elementos por página",
+    "EnableAutoplay": "Habilitar autoplay",
+    "TimeBeforeChange": "Tiempo antes de cambiar",
+    "Miliseconds": "Milisegundos",
+    "DisableAutoplayOnInteraction": "Deshabilitar autoplay al pulsar",
+    "InPixels": "En píxeles",
+    "SpaceBetweenBanners": "Espacio entre banners",
+    "EnableLoop": "Habilitar repetición",
+    "UseImageAsBackground": "Usar imagen como fondo",
+    "SpeedChange": "Velocidad de cambio",
+    "NotConfiguredSourceData": "No está configurado el origen de datos. Edita las propiedades del webpart para establecer la lista y las columnas.",
+    "Height": "Altura"
+  }
+});

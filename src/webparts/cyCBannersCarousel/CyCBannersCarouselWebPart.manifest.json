@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "5c6569ee-a866-431d-bb1a-fde1cdf9785c",
+  "alias": "CyCBannersCarouselWebPart",
+  "componentType": "WebPart",
+
+  // The "*" signifies that the version should be taken from the package.json
+  "version": "*",
+  "manifestVersion": 2,
+
+  // If true, the component can only be installed on sites where Custom Script is allowed.
+  // Components that allow authors to embed arbitrary script code should set this to true.
+  // https://support.office.com/en-us/article/Turn-scripting-capabilities-on-or-off-1f2c515f-5d7e-448a-9fd7-835da935584f
+  "requiresCustomScript": false,
+
+  "preconfiguredEntries": [{
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Other
+    "group": { "default": "Other" },
+    "title": { "default": "CyC Banners Carousel" },
+    "description": { "default": "CyC ReactJS webpart in order to show a banners carousel given a list" },
+    "officeFabricIconFontName": "PicturePosition",
+    "properties": {
+      "listName": "",
+      "enableNavigation": false,
+      "enablePagination": true,
+      "slidesPerView": "3",
+      "enableAutoplay": true,
+      "delayAutoplay": 5000,
+      "disableAutoplayOnInteraction": false,
+      "slidesPerGroup": "3",
+      "spaceBetweenSlides": "10",
+      "enableLoop": true,
+      "imageAsBackground": false,
+      "speed": 1000,
+      "height": "350"
+    }
+  }]
+}

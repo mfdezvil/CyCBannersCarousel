@@ -1,0 +1,30 @@
+define([], function() {
+  return {
+    "PropertyPaneDescription": "Carousel configuration",
+    "GeneralGroupName": "General",
+    "AutoplayGroupName": "Autoplay",
+    "DataConfigurationGroupName": "Data configuration",
+    "AdvancedGroupName": "Advanced",
+    "ListFieldLabel": "Banners List",
+    "TitleFieldLabel": "Title field",
+    "SubtitleFieldLabel": "Subtitle field",
+    "ImageFieldLabel": "Image field",
+    "URLFieldLabel": "URL field",
+    "LoadingText": "Loading options...",
+    "ErrorLoadingListsText": "Error while loading items",
+    "EnableNavigation": "Enable navigation",
+    "EnablePagination": "Enable pagination",
+    "SlidesPerWiew": "Slides per view",
+    "EnableAutoplay": "Enable autoplay",
+    "TimeBeforeChange": "Time before change",
+    "Miliseconds": "Miliseconds",
+    "DisableAutoplayOnInteraction": "Disable autoplay on interaction",
+    "InPixels": "In pixels",
+    "SpaceBetweenBanners": "Space between banners",
+    "EnableLoop": "Enable loop",
+    "UseImageAsBackground": "Use image as backgroud",
+    "SpeedChange": "Speed change",
+    "NotConfiguredSourceData": "Source data are not configured. Check webpart properties in order to set list and columns.",
+    "Height": "Height"
+  }
+});

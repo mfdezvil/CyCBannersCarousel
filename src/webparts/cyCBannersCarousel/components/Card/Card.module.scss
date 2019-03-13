@@ -1,0 +1,48 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+.card {
+  width: inherit;
+
+  .wrapper{
+    border: 1px solid grey;
+    width: inherit;
+  }
+
+  
+  .image {
+    width: inherit;
+  }
+
+  .textWrapper{
+    position: relative;
+    text-align: center;
+    .url {
+      text-decoration: none;
+      color:inherit;
+    }
+    .title {
+      margin: 10px 5px 10px 5px;
+      @include ms-font-l;
+      @include ms-fontWeight-semibold;
+      color: $ms-color-themePrimary;
+    }
+  
+    .subtitle {
+      @include ms-font-s-plus;
+    }
+  
+  }
+ 
+  .imageAsBackground {
+    background-position: center;
+    background-size: cover;
+    .textWrapper {
+      top:40%;
+      .title {
+        @include ms-fontColor-white; //HACK: Lo pongo blanco porque se verá mejor con la imagen de fondo
+        @include ms-font-xl;
+        @include ms-fontWeight-semibold;
+      }
+    }
+  }
+}

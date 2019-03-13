@@ -1,0 +1,60 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+@import '~swiper/dist/css/swiper.min.css';
+
+.cyCBannersCarousel {
+  
+  position: relative;
+
+  
+  .row {
+    @include ms-Grid-row;
+    @include ms-fontColor-white;
+    background-color: $ms-color-themePrimary;
+  }
+
+  .column {
+    @include ms-Grid-col;
+    @include ms-lg12;
+    @include ms-xl10;
+    @include ms-xlPush2;
+    @include ms-lgPush1;
+  }
+
+  .messageToShow {
+    @include ms-font-m;
+    @include ms-fontColor-white;
+  }
+
+
+  .container {
+    
+    width: 100%;
+    height: 100%;
+  }
+
+  .slide {
+    text-align: center;
+    @include ms-font-l;
+    background: #fff;
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+
+  /*
+  .swiper-pagination-bullet-active {
+    background: $ms-color-themePrimary;
+  }
+  */
+
+}
