@@ -1,7 +1,7 @@
 import styles from '../Card.module.scss';
-import { Utils } from '../../../commons/Utils';
+import { Utils } from '../../../utils/Utils';
 import * as React from 'react';
-import { CardConstants } from '../../../commons/Constants';
+import { CardConstants } from '../../../utils/Constants';
 
 export class CardRenderHelper {
 

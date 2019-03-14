@@ -1,4 +1,4 @@
-import { IBanner } from "../../entities/IBanner";
+import { IBanner } from "../../models/IBanner";
 
 export interface ICardProps {
     key: number;

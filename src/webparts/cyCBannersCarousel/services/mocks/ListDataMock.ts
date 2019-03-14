@@ -1,7 +1,8 @@
-import { ISPList } from "../../entities/ISPList";
-import { ISPColumn } from "../../entities/ISPColumn";
+import { ISPList } from "../../models/ISPList";
+import { ISPColumn } from "../../models/ISPColumn";
+import { IListDataReader } from "../ListRequestService";
 
-export class MockData {
+export class ListDataMock implements IListDataReader {
     private static _lists: ISPList[] = [{Title: "Mock List", Id: "1"},
                                         {Title: "Mock List 2", Id: "2"},
                                         {Title: "Mock List 3", Id: "3"}];
@@ -24,44 +25,23 @@ export class MockData {
 
     private static _itemsEmpty: any[] = [];
 
+    constructor(webURL?:string) {}
 
-    public static GetListsMockData(): Promise<ISPList[]> {
-        return MockData.getLists()
-            .then((lists: ISPList[]) => {
-                return lists;
-            }) as Promise<ISPList[]>;
-    }
-
-    public static GetFieldsMockData(): Promise<ISPColumn[]> {
-        return MockData.getColumns()
-            .then((fields: ISPColumn[]) => {
-                return fields;
-            }) as Promise<ISPColumn[]>;
-    }
-
-    public static GetItemsMockData(): Promise<any> {
-        return MockData.getItems()
-            .then((items: any) => {
-                return items;
-            }) as Promise<any>;
-    }
-                                        
-
-    private static getLists(): Promise<ISPList[]> {
+    public GetLists(): Promise<ISPList[]> {
         return new Promise<ISPList[]>((resolve) => {
-            resolve(MockData._lists);
+            resolve(ListDataMock._lists);
         });
     }
 
-    private static getColumns(): Promise<ISPColumn[]> {
+    public GetFieldsFromList(listName:string): Promise<ISPColumn[]> {
         return new Promise<ISPColumn[]>((resolve) => {
-            resolve(MockData._columns);
+            resolve(ListDataMock._columns);
         });
     }
 
-    public static getItems(): Promise<any[]> {
+    public GetItemsFromList(listName: string): Promise<any> {
         return new Promise<any[]>((resolve) => {
-            resolve(MockData._items);
+            resolve(ListDataMock._items);
         });
     }
 }

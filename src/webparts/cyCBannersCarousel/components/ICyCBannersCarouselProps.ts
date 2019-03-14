@@ -1,12 +1,10 @@
-import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { ICarouselOptions } from '../entities/ICarouselOptions';
+
+import { ICarouselOptions } from '../models/ICarouselOptions';
+import { ListAccessManager } from '../managers/ListAccessManager';
+import { ICarouselSPConfig } from '../models/ICarouselSPConfig';
 
 export interface ICyCBannersCarouselProps {
-  listName: string;
-  fieldTitle: string;
-  fieldSubtitle: string;
-  fieldImage: string;
-  fieldURL: string;
+  carouselSPConfig: ICarouselSPConfig;
   carouselOptions: ICarouselOptions;
-  context: WebPartContext;
+  listAccessManager: ListAccessManager;
 }

@@ -15,11 +15,11 @@ import * as strings from 'CyCBannersCarouselWebPartStrings';
 import CyCBannersCarousel from './components/CyCBannersCarousel';
 import { ICyCBannersCarouselProps } from './components/ICyCBannersCarouselProps';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/components/Dropdown';
-import { ListsRequestService } from './services/ListRequestService';
-import { ISPList } from './entities/ISPList';
-import { ISPColumn } from './entities/ISPColumn';
+import { ISPList } from './models/ISPList';
+import { ISPColumn } from './models/ISPColumn';
 import { PropertyPaneAsyncDropdown } from '../../controls/PropertyPaneAsyncDropdown/PropertyPaneAsyncDropdown';
 import { update, get } from '@microsoft/sp-lodash-subset';
+import { ListAccessManager } from './managers/ListAccessManager';
 
 export interface ICyCBannersCarouselWebPartProps {
   listName: string;
@@ -51,16 +51,22 @@ export default class CyCBannersCarouselWebPart extends BaseClientSideWebPart<ICy
   private fieldImageDropDown: IPropertyPaneField<IPropertyPaneDropdownProps>;
   private fieldURLDropDown: IPropertyPaneField<IPropertyPaneDropdownProps>;
 
+  private listAccessManager: ListAccessManager= null;
 
   public render(): void {
+    if(this.listAccessManager == null) {
+      this.listAccessManager = new ListAccessManager(this.context.pageContext.web.absoluteUrl);
+    }
     const element: React.ReactElement<ICyCBannersCarouselProps > = React.createElement(
       CyCBannersCarousel,
       {
-        listName: this.properties.listName,
-        fieldTitle: this.properties.fieldTitle,
-        fieldSubtitle: this.properties.fieldSubtitle,
-        fieldImage: this.properties.fieldImage,
-        fieldURL: this.properties.fieldURL,
+        carouselSPConfig: {
+          listName: this.properties.listName,
+          fieldTitle: this.properties.fieldTitle,
+          fieldSubtitle: this.properties.fieldSubtitle,
+          fieldImage: this.properties.fieldImage,
+          fieldURL: this.properties.fieldURL,
+        },
         carouselOptions: {
           enableNavigation: this.properties.enableNavigation,
           enablePagination: this.properties.enablePagination,
@@ -74,7 +80,7 @@ export default class CyCBannersCarouselWebPart extends BaseClientSideWebPart<ICy
           speed: this.properties.speed,
           height: this.properties.height
         },
-        context: this.context
+        listAccessManager: this.listAccessManager
       }
     );
 
@@ -248,7 +254,7 @@ export default class CyCBannersCarouselWebPart extends BaseClientSideWebPart<ICy
       return Promise.resolve(this._lists);
     }
     return new Promise<IDropdownOption[]>((resolve: (options: IDropdownOption[]) => void, reject: (error: any) => void) => {
-      ListsRequestService.GetLists(this.context.pageContext.web.absoluteUrl).then((listdata: ISPList[]) => {
+      this.listAccessManager.GetLists().then((listdata: ISPList[]) => {
         this._lists = [];
         if(listdata != null && listdata.length>0) {
           listdata.forEach((list:ISPList) => {
@@ -272,7 +278,7 @@ export default class CyCBannersCarouselWebPart extends BaseClientSideWebPart<ICy
       return Promise.resolve(this._listFields);
     }
     return new Promise<IDropdownOption[]>((resolve: (options: IDropdownOption[]) => void, reject: (error: any) => void) => {
-      ListsRequestService.GetFieldsFromList(this.context.pageContext.web.absoluteUrl, this.properties.listName).then((fieldsData: ISPColumn[]) => {
+      this.listAccessManager.GetFieldsFromList(this.properties.listName).then((fieldsData: ISPColumn[]) => {
         this._listFields = [];
         if(fieldsData != null && fieldsData.length>0) {
           fieldsData.forEach((field:ISPColumn) => {

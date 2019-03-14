@@ -1,26 +1,20 @@
 import * as React from 'react';
 import styles from './CyCBannersCarousel.module.scss';
 import { ICyCBannersCarouselProps } from './ICyCBannersCarouselProps';
-import { escape } from '@microsoft/sp-lodash-subset';
 import { ICyCBannersCarouselState } from './ICyCBannersCarouselState';
-import { ListsRequestService } from '../services/ListRequestService';
-import { Utils } from '../commons/Utils';
-import { IBanner } from '../entities/IBanner';
-import { ISPImage, ISPUrl } from '../entities/ISPLink';
-import { SPFieldsConstants } from '../commons/Constants';
+import { Utils } from '../utils/Utils';
+import { IBanner } from '../models/IBanner';
 import {Card} from './Card/Card';
-import { CarouselHelper } from '../helpers/CarouselHelper';
 import * as strings from 'CyCBannersCarouselWebPartStrings';
-
-//Necesario Swiper, para su instalación:
-// npm install swiper
-const Swiper: any = require('swiper/dist/js/swiper.min');
+import { CarouselSwiperManager } from '../managers/CarouselSwiperManager';
+import { ICarouselSPConfig } from '../models/ICarouselSPConfig';
+import { BannersDataHelper } from '../helpers/BannersDataHelper';
 
 export default class CyCBannersCarousel extends React.Component<ICyCBannersCarouselProps, ICyCBannersCarouselState> {
 
   private _itemsFromList: any[] = null;
   private uniqueId: number;
-  private swiper: any = null;
+  private carouselSwiperManager: CarouselSwiperManager;
 
   constructor(props: ICyCBannersCarouselProps) {
     super(props);
@@ -28,16 +22,16 @@ export default class CyCBannersCarousel extends React.Component<ICyCBannersCarou
       banners: [] 
     };
     this.uniqueId = Math.floor(Math.random() * 10000) + 1;
+    this.carouselSwiperManager = new CarouselSwiperManager(this.uniqueId);
   }
 
   public componentDidMount() {
-    var _self=this;
-    if(!Utils.IsNullOrEmpty(this.props.listName)) {
-      
-      ListsRequestService.GetItemsFromList(this.props.context.pageContext.web.absoluteUrl, this.props.listName).then(
+    let _self=this;
+    if(!Utils.IsNullOrEmpty(this.props.carouselSPConfig.listName)) {
+      this.props.listAccessManager.GetItemsFromList(this.props.carouselSPConfig.listName).then(
         (data) => {
           _self._itemsFromList= data;
-          if(!Utils.IsNullOrEmpty(this.props.fieldTitle) && !Utils.IsNullOrEmpty(this.props.fieldURL) && !Utils.IsNullOrEmpty(this.props.fieldImage)) {
+          if(_self.IsCarouselSPConfigInitialized()) {
             _self.SetBannersData(data);
           }
         }
@@ -47,29 +41,37 @@ export default class CyCBannersCarousel extends React.Component<ICyCBannersCarou
   }
 
   public componentDidUpdate(prevProps: ICyCBannersCarouselProps) {
-    var _self=this;
-    if(this.props.listName != prevProps.listName) {
-      ListsRequestService.GetItemsFromList(this.props.context.pageContext.web.absoluteUrl, this.props.listName).then(
+    let _self=this;
+    if(this.props.carouselSPConfig.listName != prevProps.carouselSPConfig.listName) {
+      this.setState({banners: []});
+      this._itemsFromList = null;
+      this.props.listAccessManager.GetItemsFromList(this.props.carouselSPConfig.listName).then(
         (data) => {
           _self._itemsFromList= data;
-          if(_self.IsSPDataConfigured()) {
+          if(_self.IsCarouselSPConfigInitialized()) {
             _self.SetBannersData(data);
           }
         }
       );
     }
-    else if(this.props.fieldTitle != prevProps.fieldTitle || this.props.fieldSubtitle != prevProps.fieldSubtitle || 
-      this.props.fieldImage != prevProps.fieldImage || this.props.fieldURL != prevProps.fieldURL) {
-        this.SetBannersData(this._itemsFromList);
+    else if(this.AreCarouselSPFieldsUpdated(this.props.carouselSPConfig, prevProps.carouselSPConfig)) {
+        if(this.IsCarouselSPConfigInitialized()) {
+          this.SetBannersData(this._itemsFromList);
+        }
+        else {
+          this.setState({banners: []});
+        }
     }  
-    else if(CarouselHelper.AreCarouselPropertiesUpdated(this.props.carouselOptions,prevProps.carouselOptions)) {
-        _self.UpdateCarousel();
+    else if(this.carouselSwiperManager.AreCarouselPropertiesUpdated(this.props.carouselOptions,prevProps.carouselOptions)) {
+        let hasBanners: boolean = (!Utils.IsNullOrEmpty(_self.state.banners) && _self.state.banners.length>0);
+        this.carouselSwiperManager.UpdateCarousel(_self.props.carouselOptions, hasBanners);
     }
 
   }
 
   public render(): React.ReactElement<ICyCBannersCarouselProps> {
-    if(!this.IsSPDataConfigured()) {
+    if(!this.IsCarouselSPConfigInitialized()) {
+      this.carouselSwiperManager.DestroyCarousel();
       return (
         <div className={ styles.cyCBannersCarousel }>
           <div className={styles.row}>
@@ -81,6 +83,7 @@ export default class CyCBannersCarousel extends React.Component<ICyCBannersCarou
       );
     }
     if(Utils.IsNullOrEmpty(this.state.banners) || this.state.banners.length==0) {
+      this.carouselSwiperManager.DestroyCarousel();
       return (
         <div className={ styles.cyCBannersCarousel }></div>
       );
@@ -117,30 +120,9 @@ export default class CyCBannersCarousel extends React.Component<ICyCBannersCarou
   }
 
   private SetBannersData(data: any[]): void {
-    var _self= this;
+    let _self= this;
     if(!Utils.IsNullOrEmpty(data) && data.length>0) {
-      var bannersToAdd: IBanner[] = [];
-      data.forEach(item => {
-        var bannerToAdd: IBanner= {ID: null, Title: null, Subtitle: null, Image: null, URL: null};
-        bannerToAdd.ID = item[SPFieldsConstants.ID];
-        for (var key in item) {
-          if(key == _self.props.fieldTitle){
-            bannerToAdd.Title = item[key];
-          }
-          if(key == _self.props.fieldSubtitle){
-            bannerToAdd.Subtitle = item[key];
-          }
-          if(key == _self.props.fieldImage){
-            let image: ISPImage = (item[key] != null && !Utils.IsNullOrEmpty(item[key].Url)) ? item[key] : null;
-            bannerToAdd.Image = image;
-          }
-          if(key == _self.props.fieldURL){
-            let url: ISPUrl = (item[key] != null && !Utils.IsNullOrEmpty(item[key].Url)) ? item[key] : null;
-            bannerToAdd.URL = url.Url;
-          }
-        }
-        bannersToAdd.push(bannerToAdd);
-      });
+      let bannersToAdd: IBanner[] = BannersDataHelper.FillBannersSPData(data, this.props.carouselSPConfig);
       _self.setState({..._self.state, banners: bannersToAdd } );
     }
     else {
@@ -148,29 +130,23 @@ export default class CyCBannersCarousel extends React.Component<ICyCBannersCarou
     }
     //HACK: La actualización del "setState" no es inmediata, y es necesario que los items estén añadidos/actualizados antes de actualizar el carrusel
     setTimeout(()=>{
-      _self.UpdateCarousel();
+      let hasBanners: boolean = (!Utils.IsNullOrEmpty(_self.state.banners) && _self.state.banners.length>0);
+      _self.carouselSwiperManager.UpdateCarousel(_self.props.carouselOptions, hasBanners);
     },0);
   }
 
-  private SetCarousel():void {
-    const options: any= CarouselHelper.GetCarouselOptionsForSwiper(this.props.carouselOptions, this.uniqueId);
-    this.swiper= new Swiper(`.container-${this.uniqueId}`, options);
+  private IsCarouselSPConfigInitialized():boolean {
+    return(!Utils.IsNullOrEmpty(this.props.carouselSPConfig.listName) && 
+           !Utils.IsNullOrEmpty(this.props.carouselSPConfig.fieldTitle) && 
+           !Utils.IsNullOrEmpty(this.props.carouselSPConfig.fieldURL) && 
+           !Utils.IsNullOrEmpty(this.props.carouselSPConfig.fieldImage));
   }
 
-  private UpdateCarousel():void {
-    if(this.swiper != null) {
-      //this.swiper.update(); //se supone que el método update() del swiper lo actualiza, pero no me funcionaba dinámicamente.
-      //HACK: Se borra el swiper actual y se vuelve a crear.
-      this.swiper.destroy(true, true);
-      this.SetCarousel();
-    }      
-    else
-      this.SetCarousel();
-  }
-
-  private IsSPDataConfigured():boolean {
-    return(!Utils.IsNullOrEmpty(this.props.listName) && 
-           !Utils.IsNullOrEmpty(this.props.fieldTitle) && !Utils.IsNullOrEmpty(this.props.fieldURL) && !Utils.IsNullOrEmpty(this.props.fieldImage));
+  private AreCarouselSPFieldsUpdated(currentCarouselSPConfig: ICarouselSPConfig, prevCarouselSPConfig: ICarouselSPConfig):boolean {
+    return !(currentCarouselSPConfig.fieldTitle == prevCarouselSPConfig.fieldTitle && 
+            currentCarouselSPConfig.fieldSubtitle == prevCarouselSPConfig.fieldSubtitle && 
+            currentCarouselSPConfig.fieldImage == prevCarouselSPConfig.fieldImage &&
+            currentCarouselSPConfig.fieldURL == prevCarouselSPConfig.fieldURL);
   }
 
 }
