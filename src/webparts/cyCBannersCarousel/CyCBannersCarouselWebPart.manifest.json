@@ -34,5 +34,6 @@
       "speed": 1000,
       "height": "350"
     }
-  }]
+  }],
+  "supportedHosts": ["SharePointWebPart"]
 }

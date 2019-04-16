@@ -1,14 +1,12 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import {
- IPropertyPaneField,
- PropertyPaneFieldType
-} from '@microsoft/sp-webpart-base';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/components/Dropdown';
 import { IPropertyPaneAsyncDropdownProps } from './IPropertyPaneAsyncDropdownProps';
 import { IPropertyPaneAsyncDropdownInternalProps } from './IPropertyPaneAsyncDropdownInternalProps';
 import AsyncDropdown from './components/AsyncDropdown';
 import { IAsyncDropdownProps } from './components/IAsyncDropdownProps';
+import {  } from "@microsoft/sp-webpart-base";
+import { IPropertyPaneField, PropertyPaneFieldType } from "@microsoft/sp-property-pane";
 
 export class PropertyPaneAsyncDropdown implements IPropertyPaneField<IPropertyPaneAsyncDropdownProps> {
     public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;

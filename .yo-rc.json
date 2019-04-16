@@ -2,7 +2,7 @@
   "@microsoft/generator-sharepoint": {
     "isCreatingSolution": true,
     "environment": "spo",
-    "version": "1.7.1",
+    "version": "1.8.0",
     "libraryName": "cyc-carousel-webpart",
     "libraryId": "d05fdb07-aa2c-4939-bd4c-98c97b37ad5f",
     "packageManager": "npm",
